@@ -16,8 +16,8 @@ import AnnouncementBar from '@/components/layout/AnnouncementBar';
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
+    first_name: 'John',
+    last_name: 'Doe',
     email: 'john.doe@example.com',
     phone: '+91 98765 43210',
     address: '123 Garden Street',
@@ -93,7 +93,7 @@ export default function ProfilePage() {
                   </div>
                   
                   <h2 className="text-xl font-bold text-gray-900 mb-1">
-                    {profileData.firstName} {profileData.lastName}
+                    {profileData.first_name} {profileData.last_name}
                   </h2>
                   <p className="text-gray-600 mb-4">{profileData.email}</p>
                   
@@ -169,33 +169,33 @@ export default function ProfilePage() {
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="firstName">First Name</Label>
+                        <Label htmlFor="first_name">First Name</Label>
                         {isEditing ? (
                           <Input
-                            id="firstName"
-                            value={editData.firstName}
-                            onChange={(e) => handleInputChange('firstName', e.target.value)}
+                            id="first_name"
+                            value={editData.first_name}
+                            onChange={(e) => handleInputChange('first_name', e.target.value)}
                           />
                         ) : (
                           <div className="flex items-center gap-2 p-2 border rounded-md bg-gray-50">
                             <User className="h-4 w-4 text-gray-500" />
-                            <span>{profileData.firstName}</span>
+                            <span>{profileData.first_name}</span>
                           </div>
                         )}
                       </div>
                       
                       <div>
-                        <Label htmlFor="lastName">Last Name</Label>
+                        <Label htmlFor="last_name">Last Name</Label>
                         {isEditing ? (
                           <Input
-                            id="lastName"
-                            value={editData.lastName}
-                            onChange={(e) => handleInputChange('lastName', e.target.value)}
+                            id="last_name"
+                            value={editData.last_name}
+                            onChange={(e) => handleInputChange('last_name', e.target.value)}
                           />
                         ) : (
                           <div className="flex items-center gap-2 p-2 border rounded-md bg-gray-50">
                             <User className="h-4 w-4 text-gray-500" />
-                            <span>{profileData.lastName}</span>
+                            <span>{profileData.last_name}</span>
                           </div>
                         )}
                       </div>

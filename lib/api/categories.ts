@@ -9,9 +9,9 @@ export interface Category {
 
 export const fetchCategories = async (): Promise<Category[]> => {
     try {
-        const res = await fetch('http://localhost:8000/api/categories');
-        console.log(`Fetching categories f`, res);
-        
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/categories`);
+        console.log(`Fetching categories from ${res.url}`);
+
         if (!res.ok) {
             throw new Error(`Failed to fetch categories: ${res.status} ${res.statusText}`);
         }

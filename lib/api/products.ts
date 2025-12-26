@@ -27,15 +27,27 @@ export interface Product {
   featured_image: string;
 }
 
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 export const fetchProducts = async (): Promise<Product[]> => {
-  const res = await fetch("http://localhost:8000/api/products", {
+  const res = await fetch(`${BASE_URL}/products`, {
     next: { revalidate: 60 }, // optional: ISR cache in Next.js App Router
   });
-
+  
+  
   if (!res.ok) {
     throw new Error("Failed to fetch products");
   }
 
   const data = await res.json();
+  console.log("data", data);
   return data;
+};
+
+
+export const fetchProductById = async (slug: string | number): Promise<Product> => {
+  const res = await fetch(`${BASE_URL}/products/${slug}`);
+  if (!res.ok) throw new Error("Failed to fetch product");
+  return res.json();
 };
