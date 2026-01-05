@@ -5,7 +5,13 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
-import { createRazorpayOrder } from "@/lib/api/payments";
+import { createRazorpayOrder, verifyPayment } from "@/lib/api/payments";
+// import { clearCart, clearWishlist } from "@/lib/api/payments";
+import { getUser } from "@/lib/api/users";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { clearCart } from "@/store/cartSlice";
+import { removeFromWishlist } from "@/store/wishlistSlice";
+
 
 const CURRENCY_SYMBOL = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL;
 const RAZORPAY_KEY = process.env.NEXT_PUBLIC_RAZORPAY_KEY!;
@@ -21,8 +27,11 @@ export default function OrderSummary({
   paymentMethod,
   onPlaceOrder,
 }: OrderSummaryProps) {
+  
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const { cartItems } = useCart();
-
+  
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -38,10 +47,114 @@ export default function OrderSummary({
     shippingMethod === "express" ? 199 : shippingMethod === "standard" ? 99 : 0;
 
   const total = subtotal + cgst + sgst + shipping;
+  
+  // const handlePayment = async () => {
+  //   if (paymentMethod === "cod") {
+  //     onPlaceOrder();
+  //     return;
+  //   }
+
+  //   if (!(window as any).Razorpay) {
+  //     alert("Razorpay SDK not loaded!");
+  //     return;
+  //   }
+
+  //   // 🟢 FULL ORDER DATA SENT TO BACKEND
+  //   const payload = {
+  //     items: cartItems.map((item) => ({
+  //       product_id: item.id,
+  //       name: item.name,
+  //       price: item.price,
+  //       quantity: item.quantity,
+  //     })),
+  //     subtotal,
+  //     cgst,
+  //     sgst,
+  //     shipping,
+  //     total,
+  //   };
+
+  //   const storedUser = localStorage.getItem("auth_user");
+  //   let user: any = null;
+
+  //   if (storedUser) {
+  //     try {
+  //       user = JSON.parse(storedUser);
+  //     } catch (error) {
+  //       console.error("Error parsing user JSON:", error);
+  //     }
+  //   }
+
+  //   console.log("User from localStorage:", user);
+
+  //   // 🟢 Backend returns FULL CORRECT AMOUNT IN PAISE
+  //   const order = await createRazorpayOrder(payload);
+  //   console.log("Order from backend:", order);
+  //   const razoypay_amount = total * 100;
+  //   const options = {
+  //     key: RAZORPAY_KEY,
+  //     amount: order.amount, // ALWAYS from backend
+  //     currency: order.currency,
+  //     name: "Wild Buds Botanics",
+  //     description: "Order Payment",
+  //     order_id: order.order_id,
+  //     image: "https://www.razorpay.com/images/logo/logo-white-b.png",
+
+  //     handler: async function (response: any) {
+  //       console.log("Payment Success:", response);
+
+  //       const verifyPayload = {
+  //         razorpay_order_id: response.razorpay_order_id,
+  //         razorpay_payment_id: response.razorpay_payment_id,
+  //         razorpay_signature: response.razorpay_signature,
+  //       };
+
+  //       try {
+  //         const verify = await verifyPayment(verifyPayload);
+  //         if (verify.status === "success") {
+  //           onPlaceOrder(); // Save order in system if needed
+  //           clearCart();
+  //           clearWishlist();
+  //           window.location.href = "/orders"; // Redirect only when verified
+  //         } else {
+  //           alert("Payment Verification Failed!");
+  //         }
+  //       } catch (error) {
+  //         console.error("Verification Error: ", error);
+  //         alert("Verification Failed. Payment not confirmed.");
+  //       }
+  //     },
+
+  //     prefill: {
+  //       email: user?.email || "customer@example.com",
+  //       contact: user?.phone || "9999999999",
+  //     },
+
+  //     method: {
+  //       upi: paymentMethod === "upi",
+  //       card: paymentMethod === "card",
+  //     },
+
+  //     upi: {
+  //       mode: "intent", // supports GPay / PhonePe / Paytm
+  //     },
+
+  //     theme: {
+  //       color: "#03312f",
+  //     },
+  //   };
+
+  //   console.log("Final Razorpay Options:", options);
+
+  //   const razorpay = new (window as any).Razorpay(options);
+  //   razorpay.open();
+  // };
 
   const handlePayment = async () => {
     if (paymentMethod === "cod") {
       onPlaceOrder();
+      dispatch(clearCart());
+      window.location.href = "/orders";
       return;
     }
 
@@ -50,7 +163,6 @@ export default function OrderSummary({
       return;
     }
 
-    // 🟢 FULL ORDER DATA SENT TO BACKEND
     const payload = {
       items: cartItems.map((item) => ({
         product_id: item.id,
@@ -65,46 +177,65 @@ export default function OrderSummary({
       total,
     };
 
-    console.log("Payload Sent:", payload);
+      const storedUser = localStorage.getItem("auth_user");
+    let user: any = null;
 
-    // 🟢 Backend returns FULL CORRECT AMOUNT IN PAISE
+    if (storedUser) {
+      try {
+        user = JSON.parse(storedUser);
+      } catch (error) {
+        console.error("Error parsing user JSON:", error);
+      }
+    }
+
     const order = await createRazorpayOrder(payload);
-    console.log("Order from backend:", order);
-    const razoypay_amount = total * 100;
+
     const options = {
       key: RAZORPAY_KEY,
-      // amount: "1000", // 🟢 correct paise amount from server
+      amount: order.amount,
       currency: order.currency,
       name: "Wild Buds Botanics",
       description: "Order Payment",
       order_id: order.order_id,
-      image: "https://www.razorpay.com/images/logo/logo-white-b.png",
-      handler: function (response: any) {
-        console.log("Payment Success:", response);
-        onPlaceOrder();
-      },
+      handler: async function (response: any) {
+        try {
+          const verify = await verifyPayment({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          });
 
+          if (verify.status === "success") {
+            onPlaceOrder();
+
+            dispatch(clearCart());
+
+            // Remove purchased items from wishlist if exist
+            payload.items.forEach((i) => {
+              dispatch(removeFromWishlist(i.product_id));
+            });
+
+            window.location.href = "/orders";
+          } else {
+            alert("Payment Verification Failed!");
+          }
+        } catch (error) {
+          console.error("Verification Error: ", error);
+          alert("Verification Failed. Payment not confirmed.");
+        }
+      },
       prefill: {
-        email: "customer@example.com",
-        contact: "9999999999",
+        name: user?.name,
+        email: user?.email || "customer@example.com",
+        contact: user?.phone || "9999999999",
       },
-
-      method: {
-        card: paymentMethod === "card",
-        upi: paymentMethod === "upi",
-      },
-
-      theme: {
-        color: "#03312f",
-      },
+      theme: { color: "#03312f" },
     };
-
-    console.log("Final Razorpay Options:", options);
 
     const razorpay = new (window as any).Razorpay(options);
     razorpay.open();
   };
-
+  
   const buttonText =
     paymentMethod === "cod"
       ? "Place Order (COD)"

@@ -26,7 +26,9 @@ export const createRazorpayOrder = async (payload: CreateOrderPayload) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("access_token")}`,
       },
+      
       body: JSON.stringify(payload),
     }
   );
@@ -49,9 +51,18 @@ export const verifyPayment = async (data: {
   const res = await fetch(`${BASE_URL}/payments/verify-payment/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    
     body: JSON.stringify(data),
   });
 
   if (!res.ok) throw new Error("Payment Verification failed");
   return res.json();
+};
+
+export const clearCart = () => {
+  localStorage.removeItem("cartItems");
+};
+
+export const clearWishlist = () => {
+  localStorage.removeItem("wishlist");
 };
