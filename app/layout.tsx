@@ -11,10 +11,10 @@ import { Toaster } from "sonner"; // ⬅️ ADD THIS
 // ✅ Local Inter font (NO Google fetch → build-safe)
 const inter = localFont({
   src: [
-    { path: "../public/fonts/Inter-Regular.woff2", weight: "400" },
-    { path: "../public/fonts/Inter-Medium.woff2", weight: "500" },
-    { path: "../public/fonts/Inter-SemiBold.woff2", weight: "600" },
-    { path: "../public/fonts/Inter-Bold.woff2", weight: "700" },
+    { path: "../public/fonts/Inter-SemiBold.ttf", weight: "400" },
+    { path: "../public/fonts/Inter-Medium.ttf", weight: "500" },
+    { path: "../public/fonts/Inter-Medium.ttf", weight: "600" },
+    { path: "../public/fonts/Inter-Bold.ttf", weight: "700" },
   ],
   display: "swap",
 });

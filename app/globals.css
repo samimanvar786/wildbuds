@@ -2,6 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* ================================
+   Inter Font (TTF – Node Safe)
+   ================================ */
+
+/* Inter – Regular (400) */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter – Medium (500) */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter – SemiBold (600) */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter – Bold (700) */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ================================
+   Root variables
+   ================================ */
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -15,6 +60,10 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
+
+/* ================================
+   Tailwind Theme Tokens
+   ================================ */
 
 @layer base {
   :root {
@@ -44,6 +93,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -72,16 +122,25 @@
   }
 }
 
+/* ================================
+   Base styles
+   ================================ */
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   }
 }
 
-/* Custom scrollbar */
+/* ================================
+   Custom scrollbar
+   ================================ */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -99,12 +158,14 @@
   background: #024a46;
 }
 
-/* Smooth animations */
+/* ================================
+   Animations & Focus
+   ================================ */
+
 * {
   transition: all 0.2s ease-in-out;
 }
 
-/* Focus styles */
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
@@ -112,7 +173,10 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* Line clamp utility */
+/* ================================
+   Line clamp utilities
+   ================================ */
+
 .line-clamp-1 {
   overflow: hidden;
   display: -webkit-box;
