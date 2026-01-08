@@ -165,7 +165,7 @@ export default function OrderSummary({
 
     const payload = {
       items: cartItems.map((item) => ({
-        product_id: item.id,
+        product_id: Number(item.id),
         name: item.name,
         price: item.price,
         quantity: item.quantity,

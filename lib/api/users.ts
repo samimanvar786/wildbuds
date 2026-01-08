@@ -1,3 +1,5 @@
+import axios from "axios";
+
 // lib/api.ts
 export interface CustomerPayload {
   first_name: string;
@@ -33,6 +35,12 @@ export interface CombinedResponse {
   user: any;
   billing: any;
 }
+
+export type RegisterPayload = {
+  username: string;
+  email: string;
+  password: string;
+};
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -71,14 +79,14 @@ async function handleRes(res: Response) {
 // -------------------------------
 // User APIs
 // -------------------------------
-export const createUser = async (data: CustomerPayload) => {
-  const res = await fetch(`${BASE_URL}/api/users/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-  return handleRes(res);
-};
+// export const createUser = async (data: CustomerPayload) => {
+//   const res = await fetch(`${BASE_URL}/api/users/`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(data),
+//   });
+//   return handleRes(res);
+// };
 
 export const checkEmailExists = async (email: string) => {
   const res = await fetch(`${BASE_URL}/api/users/check-email?email=${email}`);
@@ -95,11 +103,12 @@ export const loginUser = async (email: string, password: string) => {
     });
 
     const data = await handleRes(res);
-
+    
     // Save JWT token
     if (typeof window !== "undefined" && data?.access) {
       localStorage.setItem("access_token", data.access);
       localStorage.setItem("refresh_token", data.refresh || "");
+      localStorage.setItem("user", data.user || "");
     }
 
     return data;
@@ -126,21 +135,49 @@ export const getUser = async () => {
 // -------------------------------
 // Register user + billing
 // -------------------------------
+// 🔧 UPDATED: Added options parameter for auto-login
 export const registerUserWithBilling = async (
   userData: RegisterUserPayload,
-  billingData: BillingPayload
+  billingData: BillingPayload,
+  options?: {
+    autoLoginPassword?: string;
+    saveTokenToLocalStorage?: boolean;
+  }
 ): Promise<CombinedResponse> => {
   try {
+    // 1️⃣ Register user
     const userRes = await fetch(`${BASE_URL}/api/users/register/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(userData),
     });
+
     const user = await handleRes(userRes);
 
+    // 🔧 UPDATED: Optional auto-login logic
+    if (options?.autoLoginPassword) {
+      const login = await loginUser(
+        userData.email,
+        options.autoLoginPassword
+      );
+
+      if (
+        options.saveTokenToLocalStorage &&
+        typeof window !== "undefined"
+      ) {
+        localStorage.setItem("access_token", login.access);
+        localStorage.setItem("refresh_token", login.refresh || "");
+        localStorage.setItem("refresh_token", login.user || "");
+      }
+    }
+
+    // 3️⃣ Create billing address
     const billingRes = await fetch(`${BASE_URL}/api/users/billing/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders(),
+      },
       body: JSON.stringify(billingData),
     });
 
@@ -149,9 +186,37 @@ export const registerUserWithBilling = async (
     return { user, billing };
   } catch (error: any) {
     console.error("Registration error:", error);
-    throw new Error(error.message);
+    throw new Error(error.message || "Registration failed");
   }
 };
+
+export async function registerUser(payload: RegisterPayload) {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/api/users/register/`,
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    // Axios error handling (clean & safe)
+    if (axios.isAxiosError(error)) {
+      const message =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        "Registration failed";
+      throw new Error(message);
+    }
+
+    throw new Error("Something went wrong");
+  }
+}
+
 
 // -------------------------------
 // ADDRESS CRUD APIs

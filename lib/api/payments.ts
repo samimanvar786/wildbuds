@@ -1,13 +1,13 @@
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-export interface CreateOrderPayload {
-  items: {
-    product_id: number;
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-}
+// export interface CreateOrderPayload {
+//   items: {
+//     product_id: number;
+//     name: string;
+//     price: number;
+//     quantity: number;
+//   }[];
+// }
 
 
 export interface CreateOrderPayload {
@@ -17,6 +17,11 @@ export interface CreateOrderPayload {
     price: number;
     quantity: number;
   }[];
+  subtotal: number;
+  cgst: number;
+  sgst: number;
+  shipping: number;
+  total: number;
 }
 
 export const createRazorpayOrder = async (payload: CreateOrderPayload) => {

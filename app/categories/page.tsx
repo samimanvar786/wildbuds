@@ -8,10 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useCategories } from '@/hooks/useCategories';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
+import { fetchCategories, Category } from "@/lib/api/categories";
 
 
 export default function Categories() {
   const { categories, loading, error } = useCategories();
+  
 
   if (loading) {
     return <div className="text-center py-16">Loading categories...</div>;

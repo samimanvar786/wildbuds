@@ -9,6 +9,8 @@ import Headers from "../../components/layout/Navigation";
 import UserDetailsCard from "../checkout/UserDetails";
 import { registerUserWithBilling } from "../../lib/api/users";
 
+
+
 export default function CheckoutPage() {
   // --- form state ---
   const [customerDetails, setCustomerDetails] = useState<CustomerDetailsType>({

@@ -1,13 +1,14 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Mail, Lock, Eye, EyeOff, Phone, MapPin } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { createUser, loginUser } from "@/lib/api/users";
+import { registerUser, loginUser } from "@/lib/api/users";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -20,41 +21,29 @@ export default function SignupForm() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
+    username: "",
     email: "",
     password: "",
     confirm: "",
-    address: "",
-    city: "",
-    state: "",
-    postcode: "",
     agree: false,
-    newsletter: true,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function handleChange(name: string, value: string | boolean) {
     setForm((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: "" })); // clear error on typing
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   }
 
   function validate() {
     const newErrors: Record<string, string> = {};
-    if (!form.firstName) newErrors.firstName = "First name is required";
-    if (!form.lastName) newErrors.lastName = "Last name is required";
-    if (!form.phone) newErrors.phone = "Phone number is required";
+
+    if (!form.username) newErrors.username = "Username is required";
     if (!form.email) newErrors.email = "Email is required";
     if (!form.password) newErrors.password = "Password is required";
     if (form.password !== form.confirm)
       newErrors.confirm = "Passwords do not match";
-    // if (!form.address) newErrors.address = "Address is required";
-    // if (!form.city) newErrors.city = "City is required";
-    // if (!form.state) newErrors.state = "State is required";
-    // if (!form.postcode) newErrors.postcode = "Postcode is required";
-    // if (!form.agree) newErrors.agree = "You must agree to terms";
+    if (!form.agree) newErrors.agree = "You must agree to terms";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -65,21 +54,20 @@ export default function SignupForm() {
     if (!validate()) return;
 
     setIsLoading(true);
+
     try {
-      await createUser({
-        first_name: form.firstName,
-        last_name: form.lastName,
-        phone: form.phone,
+      await registerUser({
+        username: form.username,
         email: form.email,
-        address: form.address,
-        city: form.city,
-        state: form.state,
-        postcode: form.postcode,
         password: form.password,
       });
-      // auto login
-      const res = await loginUser(form.email, form.password);
-      localStorage.setItem("auth", JSON.stringify(res));
+
+      // auto-login after register
+      const auth = await loginUser(form.email, form.password);
+      console.log("auth login",auth);
+      
+      localStorage.setItem("auth", JSON.stringify(auth));
+
       router.push(fromCheckout ? "/checkout?step=payment" : redirectTo);
     } catch (err) {
       alert((err as Error).message);
@@ -90,212 +78,90 @@ export default function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* names */}
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>First Name *</Label>
-          <Input
-            value={form.firstName}
-            onChange={(e) => handleChange("firstName", e.target.value)}
-          />
-          {errors.firstName && (
-            <p className="text-red-500 text-sm">{errors.firstName}</p>
-          )}
-        </div>
-        <div>
-          <Label>Last Name *</Label>
-          <Input
-            value={form.lastName}
-            onChange={(e) => handleChange("lastName", e.target.value)}
-          />
-          {errors.lastName && (
-            <p className="text-red-500 text-sm">{errors.lastName}</p>
-          )}
-        </div>
-      </div>
 
-      {/* phone */}
+      {/* USERNAME */}
       <div>
-        <Label>Phone *</Label>
+        <Label>Username *</Label>
         <div className="relative">
-          <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            type="tel"
-            placeholder="+91 0000000000"
-            value={form.phone}
-            onChange={(e) => handleChange("phone", e.target.value)}
             className="pl-10"
+            value={form.username}
+            onChange={(e) => handleChange("username", e.target.value)}
           />
         </div>
-        {errors.phone && (
-          <p className="text-red-500 text-sm">{errors.phone}</p>
-        )}
+        {errors.username && <p className="text-red-500">{errors.username}</p>}
       </div>
 
-      {/* email */}
+      {/* EMAIL */}
       <div>
         <Label>Email *</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
+            className="pl-10"
             type="email"
-            placeholder="john@example.com"
             value={form.email}
             onChange={(e) => handleChange("email", e.target.value)}
-            className="pl-10"
           />
         </div>
-        {errors.email && (
-          <p className="text-red-500 text-sm">{errors.email}</p>
-        )}
+        {errors.email && <p className="text-red-500">{errors.email}</p>}
       </div>
 
-      {/* password */}
+      {/* PASSWORD */}
       <div>
         <Label>Password *</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
+            className="pl-10 pr-10"
             type={showPassword ? "text" : "password"}
             value={form.password}
             onChange={(e) => handleChange("password", e.target.value)}
-            className="pl-10 pr-10"
           />
           <Button
             type="button"
             variant="ghost"
-            size="sm"
-            className="absolute right-0 top-0 h-full px-3"
+            className="absolute right-0 top-0 h-full"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
+            {showPassword ? <EyeOff /> : <Eye />}
           </Button>
         </div>
-        {errors.password && (
-          <p className="text-red-500 text-sm">{errors.password}</p>
-        )}
+        {errors.password && <p className="text-red-500">{errors.password}</p>}
       </div>
 
-      {/* confirm */}
+      {/* CONFIRM */}
       <div>
         <Label>Confirm Password *</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            type={showConfirm ? "text" : "password"}
-            value={form.confirm}
-            onChange={(e) => handleChange("confirm", e.target.value)}
-            className="pl-10 pr-10"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="absolute right-0 top-0 h-full px-3"
-            onClick={() => setShowConfirm(!showConfirm)}
-          >
-            {showConfirm ? (
-              <EyeOff className="h-4 w-4" />
-            ) : (
-              <Eye className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-        {errors.confirm && (
-          <p className="text-red-500 text-sm">{errors.confirm}</p>
-        )}
+        <Input
+          type={showConfirm ? "text" : "password"}
+          value={form.confirm}
+          onChange={(e) => handleChange("confirm", e.target.value)}
+        />
+        {errors.confirm && <p className="text-red-500">{errors.confirm}</p>}
       </div>
 
-      {/* address
-      <div>
-        <Label>Address *</Label>
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            value={form.address}
-            onChange={(e) => handleChange("address", e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        {errors.address && (
-          <p className="text-red-500 text-sm">{errors.address}</p>
-        )}
-      </div> */}
-
-      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <Input
-            placeholder="City"
-            value={form.city}
-            onChange={(e) => handleChange("city", e.target.value)}
-          />
-          {errors.city && (
-            <p className="text-red-500 text-sm">{errors.city}</p>
-          )}
-        </div>
-        <div>
-          <Input
-            placeholder="State"
-            value={form.state}
-            onChange={(e) => handleChange("state", e.target.value)}
-          />
-          {errors.state && (
-            <p className="text-red-500 text-sm">{errors.state}</p>
-          )}
-        </div>
-        <div>
-          <Input
-            placeholder="Postcode"
-            value={form.postcode}
-            onChange={(e) => handleChange("postcode", e.target.value)}
-          />
-          {errors.postcode && (
-            <p className="text-red-500 text-sm">{errors.postcode}</p>
-          )}
-        </div>
-      </div> */}
-
-      {/* checkboxes */}
-      <div className="space-y-2">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="agree"
-            checked={form.agree}
-            onCheckedChange={(checked) => handleChange("agree", !!checked)}
-          />
-          <Label htmlFor="agree" className="text-sm">
-            I agree to the{" "}
-            <Link href="/terms" className="text-[#03312f] hover:underline">
-              Terms
-            </Link>{" "}
-            and{" "}
-            <Link href="/privacy" className="text-[#03312f] hover:underline">
-              Privacy Policy
-            </Link>
-          </Label>
-        </div>
-        {errors.agree && (
-          <p className="text-red-500 text-sm">{errors.agree}</p>
-        )}
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="newsletter"
-            checked={form.newsletter}
-            onCheckedChange={(checked) =>
-              handleChange("newsletter", !!checked)
-            }
-          />
-          <Label htmlFor="newsletter" className="text-sm">
-            Subscribe to our newsletter
-          </Label>
-        </div>
+      {/* TERMS */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          checked={form.agree}
+          onCheckedChange={(checked) => handleChange("agree", !!checked)}
+        />
+        <Label>
+          I agree to{" "}
+          <Link href="/terms" className="underline">
+            Terms
+          </Link>{" "}
+          &{" "}
+          <Link href="/privacy" className="underline">
+            Privacy Policy
+          </Link>
+        </Label>
       </div>
+      {errors.agree && <p className="text-red-500">{errors.agree}</p>}
 
-      <Button type="submit" className="w-full bg-[#03312f]" disabled={isLoading}>
+      <Button disabled={isLoading} className="w-full bg-[#03312f]">
         {isLoading ? "Creating..." : "Create Account"}
       </Button>
     </form>

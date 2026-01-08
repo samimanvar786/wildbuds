@@ -1,27 +1,41 @@
+// hooks/useCategories.ts
 'use client';
 
-import { useEffect, useState } from 'react';
-import { fetchCategories, Category } from '@/lib/api/categories';
+import { useEffect, useState } from "react";
+import { fetchCategories, Category } from "@/lib/api/categories";
 
-export const useCategories = () => {
+export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
+    let isMounted = true;
+
+    const loadCategories = async () => {
       try {
+        setLoading(true);
         const data = await fetchCategories();
-        setCategories(data);
+        if (isMounted) {
+          setCategories(data);
+        }
       } catch (err: any) {
-        setError(err.message);
+        if (isMounted) {
+          setError(err.message || "Failed to load categories");
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
-    load();
+    loadCategories();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return { categories, loading, error };
-};
+}

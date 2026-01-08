@@ -25,12 +25,28 @@ type Address = {
   created_at: string;
 };
 
+export type UserType = {
+  name: string;
+  email: string;
+  phone: string;
+  billing?: {
+    fullName?: string;
+    address?: string;
+    city?: string;
+    postalCode?: string;
+  };
+};
+
+type UserDetailsCardProps = {
+  user: UserType; // ✅ THIS IS WHAT FIXES THE ERROR
+};
+
 // FORM TYPE
 type AddressPayload = {
   full_name: string;
   phone: string;
   address_line_1: string;
-  address_line_2?: string | null;
+   address_line_2?: string;
   city: string;
   state: string;
   country: string;
@@ -120,20 +136,27 @@ export default function UserDetailsCard() {
   };
 
   const handleSave = async () => {
-    try {
-      if (editingAddressId) {
-        await updateAddress(editingAddressId, formData);
-        toast.success("Address updated");
-      } else {
-        await createAddress(formData);
-        toast.success("Address created");
-      }
-      setIsEditing(false);
-      refreshAddresses();
-    } catch (err: any) {
-      toast.error(err.message);
+  try {
+    const payload = {
+      ...formData,
+      address_line_2:
+        formData.address_line_2?.trim() || undefined, // ✅ FIX
+    };
+
+    if (editingAddressId) {
+      await updateAddress(editingAddressId, payload);
+      toast.success("Address updated");
+    } else {
+      await createAddress(payload);
+      toast.success("Address created");
     }
-  };
+
+    setIsEditing(false);
+    refreshAddresses();
+  } catch (err: any) {
+    toast.error(err.message);
+  }
+};
 
   const handleDelete = (id: number) => {
     toast.warning("Confirm delete?", {

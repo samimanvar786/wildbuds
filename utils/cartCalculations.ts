@@ -1,7 +1,10 @@
-import { CartItem } from '@/types/cart';
+import { CartItem } from "@/store/cartSlice";
 
 export function calculateSubtotal(items: CartItem[]) {
-  return items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+  return items.reduce(
+    (sum, item) => sum + Number(item.price) * item.quantity,
+    0
+  );
 }
 
 export function calculateDiscount(subtotal: number, discountRate: number) {
@@ -16,6 +19,11 @@ export function calculateTax(amount: number) {
   return amount * 0.08;
 }
 
-export function calculateTotal(subtotal: number, discount: number, shipping: number, tax: number) {
+export function calculateTotal(
+  subtotal: number,
+  discount: number,
+  shipping: number,
+  tax: number
+) {
   return subtotal - discount + shipping + tax;
 }
