@@ -11,7 +11,7 @@ declare global {
 
 export default function PaymentPage() {
   const [loading, setLoading] = useState(false);
-
+  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   // Dynamically load Razorpay SDK
   const loadRazorpayScript = () => {
     return new Promise<boolean>((resolve) => {
@@ -29,7 +29,7 @@ export default function PaymentPage() {
     setLoading(true);
 
     // 1️⃣ Create an order in your backend
-    const orderRes = await fetch('http://127.0.0.1:8000/api/payments/create-order/', {
+    const orderRes = await fetch(`${BASE_URL}/api/payments/create-order/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export default function PaymentPage() {
         console.log('Payment success', response);
 
         // 4️⃣ Verify payment signature with your backend
-        const verifyRes = await fetch('http://127.0.0.1:8000/api/payments/verify-payment/', {
+        const verifyRes = await fetch(`${BASE_URL}/api/payments/verify-payment/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
