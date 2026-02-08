@@ -40,7 +40,8 @@ export default function PaymentPage() {
         receipt: 'rcpt#1',
       }),
     });
-
+    console.log("orderRes",orderRes);
+    
     const orderData = await orderRes.json();
     if (!orderRes.ok) {
       alert(orderData.error || 'Order creation failed');
