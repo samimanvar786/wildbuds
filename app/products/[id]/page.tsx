@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   Star,
   Heart,
@@ -9,24 +10,24 @@ import {
   Truck,
   Shield,
   RotateCcw,
-  MessageCircle,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { useState, useEffect } from "react";
+
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import ProductImageGallery from "@/app/products/ProductImageGallery";
-import { ProductPricing } from "@/app/products/ProductPricing";
 import { ProductSizeSelector } from "@/app/products/ProductSizeSelector";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { useCart } from "@/hooks/useCart";
 import { fetchProductById } from "@/lib/api/products";
 import { Product } from "@/types/product";
 
 const CURRENCY_SYMBOL = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL;
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+const ROSE_PINK = "#D86A8C";
 
 export default function ProductDetailPage({
   params,
@@ -46,10 +47,11 @@ export default function ProductDetailPage({
       try {
         const prod = await fetchProductById(params.id);
         setProduct(prod);
-      } catch (err) {
-        console.error("Failed to fetch product:", err);
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
       }
     };
+
     loadProduct();
   }, [params.id]);
 
@@ -67,98 +69,84 @@ export default function ProductDetailPage({
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <ProductImageGallery images={product.images} />
+          {/* Images */}
+          <ProductImageGallery
+            images={product.images}
+            selectedImage={selectedImage}
+            onSelect={setSelectedImage}
+          />
 
+          {/* Info */}
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+            <h1 className="text-3xl font-bold">{product.name}</h1>
 
-            {/* <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <Star
-                  key={s}
-                  className={`h-5 w-5 ${
-                    s <= Math.floor(product.rating)
-                      ? "text-yellow-400"
-                      : "text-gray-300"
-                  }`}
-                />
-              ))}
-              <span className="text-sm text-gray-600">
-                ({product.reviews} reviews)
-              </span>
-            </div> */}
-
-            <div className="flex items-center gap-4 mb-4">
+            {/* Rating & Stock */}
+            <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`h-5 w-5 ${
-                        star <= Math.floor(product.rating)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
-                      }`}
-                    />
-                  ))}
-                </div>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={`h-5 w-5 ${
+                      star <= Math.floor(product.rating)
+                        ? "text-yellow-400 fill-current"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
                 <span className="text-sm text-gray-600">
                   ({product.reviews} reviews)
                 </span>
               </div>
 
               {product.inStock ? (
-                <Badge
-                  variant="outline"
-                  className="text-green-600 border-green-600"
-                >
+                <Badge variant="outline" className="text-green-600 border-green-600">
                   In Stock ({product.in_stock} left)
                 </Badge>
               ) : (
-                <Badge
-                  variant="outline"
-                  className="text-red-600 border-red-600"
-                >
+                <Badge variant="outline" className="text-red-600 border-red-600">
                   Out of Stock
                 </Badge>
               )}
             </div>
 
-            {/* <ProductPricing
-              price={product.price}
-              originalPrice={product.originalPrice}
-            /> */}
-            <div className="flex items-center gap-4 mb-6">
+            {/* Price */}
+            <div className="flex items-center gap-4">
               {Number(product.sale_price) > 0 ? (
                 <>
-                  <span className="text-3xl font-bold text-[#03312f]">
-                    {CURRENCY_SYMBOL}{Number(product.sale_price).toFixed(2)}
+                  <span
+                    className="text-3xl font-bold"
+                    style={{ color: ROSE_PINK }}
+                  >
+                    {CURRENCY_SYMBOL}
+                    {Number(product.sale_price).toFixed(2)}
                   </span>
 
-                  {product.price && (
-                    <span className="text-xl text-gray-500 line-through">
-                      {CURRENCY_SYMBOL}{Number(product.price).toFixed(2)}
-                    </span>
-                  )}
+                  <span className="text-xl text-gray-500 line-through">
+                    {CURRENCY_SYMBOL}
+                    {Number(product.price).toFixed(2)}
+                  </span>
 
-                  {product.price && (
-                    <Badge className="bg-red-100 text-red-800">
-                      Save {CURRENCY_SYMBOL}
-                      {(
-                        Number(product.price) - Number(product.sale_price)
-                      ).toFixed(2)}
-                    </Badge>
-                  )}
+                  <Badge className="bg-red-100 text-red-800">
+                    Save {CURRENCY_SYMBOL}
+                    {(
+                      Number(product.price) - Number(product.sale_price)
+                    ).toFixed(2)}
+                  </Badge>
                 </>
               ) : (
-                <span className="text-3xl font-bold text-[#03312f]">
-                  {CURRENCY_SYMBOL}{Number(product.price).toFixed(2)}
+                <span
+                  className="text-3xl font-bold"
+                  style={{ color: ROSE_PINK }}
+                >
+                  {CURRENCY_SYMBOL}
+                  {Number(product.price).toFixed(2)}
                 </span>
               )}
             </div>
 
             <p className="text-gray-600">{product.description}</p>
 
+            {/* Size */}
             <ProductSizeSelector
               sizes={product.sizes}
               weight={product.weight}
@@ -166,11 +154,9 @@ export default function ProductDetailPage({
               onSelect={setSelectedSize}
             />
 
+            {/* Quantity */}
             <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-              >
+              <Button variant="ghost" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
                 <Minus />
               </Button>
               <span>{quantity}</span>
@@ -179,52 +165,56 @@ export default function ProductDetailPage({
               </Button>
             </div>
 
+            {/* Actions */}
             <div className="flex gap-4">
               <Button
                 size="lg"
-                className="flex-1 bg-[#03312f] hover:bg-[#024a46] text-white"
-                onClick={() => handleAddToCart(product, quantity, selectedSize)}
+                className="flex-1 text-white"
+                style={{ backgroundColor: ROSE_PINK }}
+                onClick={() =>
+                  handleAddToCart(product, quantity, selectedSize)
+                }
               >
-                <ShoppingCart className="mr-2" /> Add to Cart
+                <ShoppingCart className="mr-2" />
+                Add to Cart
               </Button>
+
               <Button
                 variant="outline"
                 onClick={() => setIsWishlisted(!isWishlisted)}
                 className={
-                  isWishlisted ? "bg-[#03312f] text-white" : "text-[#03312f]"
+                  isWishlisted
+                    ? "text-white"
+                    : ""
+                }
+                style={
+                  isWishlisted
+                    ? { backgroundColor: ROSE_PINK }
+                    : { color: ROSE_PINK, borderColor: ROSE_PINK }
                 }
               >
                 <Heart className={isWishlisted ? "fill-current" : ""} />
               </Button>
             </div>
 
-            {/* Features */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Key Features</h3>
-              <ul className="space-y-2">{product.features}</ul>
-            </div>
-
             {/* Guarantees */}
             <div className="grid grid-cols-3 gap-4 pt-6 border-t">
-              <div className="text-center">
-                <Truck className="h-6 w-6 text-[#03312f] mx-auto mb-2" />
-                <p className="text-sm font-medium">Free Delivery</p>
-                <p className="text-xs text-gray-600">Orders over {CURRENCY_SYMBOL}75</p>
-              </div>
-              <div className="text-center">
-                <Shield className="h-6 w-6 text-[#03312f] mx-auto mb-2" />
-                <p className="text-sm font-medium">Plant Guarantee</p>
-                <p className="text-xs text-gray-600">30-day healthy</p>
-              </div>
-              <div className="text-center">
-                <RotateCcw className="h-6 w-6 text-[#03312f] mx-auto mb-2" />
-                <p className="text-sm font-medium">Easy Returns</p>
-                <p className="text-xs text-gray-600">Hassle-free</p>
-              </div>
+              {[
+                { icon: Truck, title: "Free Delivery", sub: "Orders over $75" },
+                { icon: Shield, title: "Plant Guarantee", sub: "30-day healthy" },
+                { icon: RotateCcw, title: "Easy Returns", sub: "Hassle-free" },
+              ].map(({ icon: Icon, title, sub }) => (
+                <div key={title} className="text-center">
+                  <Icon className="h-6 w-6 mx-auto mb-2" style={{ color: ROSE_PINK }} />
+                  <p className="text-sm font-medium">{title}</p>
+                  <p className="text-xs text-gray-600">{sub}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
+        {/* Tabs */}
         <Tabs defaultValue="description">
           <TabsList className="grid grid-cols-3 w-full">
             <TabsTrigger value="description">Description</TabsTrigger>
@@ -243,8 +233,7 @@ export default function ProductDetailPage({
           <TabsContent value="care">
             <Card className="mt-4">
               <CardContent className="p-6 text-gray-600">
-                {product?.careInstructions &&
-                Object.keys(product.careInstructions).length > 0 ? (
+                {product.careInstructions ? (
                   <ul>
                     {Object.entries(product.careInstructions).map(
                       ([key, val]) => (

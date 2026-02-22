@@ -127,73 +127,37 @@
    ================================ */
 
 @layer base {
-  * {
-    @apply border-border;
+  :root {
+    /* Default background */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+
+    /* 🌹 Brand Color – Rose Pink */
+    --primary: 340 55% 63%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 340 55% 63%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 340 55% 63%;
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 340 40% 85%;
+    --input: 340 40% 85%;
+    --ring: 340 55% 63%;
+
+    --radius: 0.5rem;
   }
-
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-}
-
-/* ================================
-   Custom scrollbar
-   ================================ */
-
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #03312f;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #024a46;
-}
-
-/* ================================
-   Animations & Focus
-   ================================ */
-
-* {
-  transition: all 0.2s ease-in-out;
-}
-
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid #03312f;
-  outline-offset: 2px;
-}
-
-/* ================================
-   Line clamp utilities
-   ================================ */
-
-.line-clamp-1 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-}
-
-.line-clamp-2 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.line-clamp-3 {
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
 }

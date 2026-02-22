@@ -10,25 +10,25 @@ export default function Hero() {
 
   const slides = [
     {
-      title: "Wild Buds Botanics 2024",
-      subtitle: "Nature's Finest Collection",
+      title: "Native Nettle",
+      subtitle: "Himalayan Native Nettle",
       description: "Transform your space with our curated selection of premium plants, flowers, and botanical accessories.",
       buttonText: "Shop Plants",
-      image: "https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop"
+      image: "/nattive.png"
     },
     {
-      title: "Indoor Plant Paradise",
-      subtitle: "Bring Nature Home",
+      title: "Pristine Pine",
+      subtitle: "Himalayan Pristine Pine",
       description: "Discover our stunning collection of indoor plants perfect for every room and lifestyle.",
       buttonText: "Explore Indoor Plants",
-      image: "https://images.pexels.com/photos/1084199/pexels-photo-1084199.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop"
+      image: "/pristine.jpg"
     },
     {
-      title: "Garden Essentials",
-      subtitle: "Cultivate Beauty",
+      title: "Himalayan",
+      subtitle: "Wild Buds",
       description: "Everything you need to create and maintain your perfect garden sanctuary.",
       buttonText: "Shop Garden",
-      image: "https://images.pexels.com/photos/1301856/pexels-photo-1301856.jpeg?auto=compress&cs=tinysrgb&w=1200&h=600&fit=crop"
+      image: "Strips.jpg"
     }
   ];
 
@@ -40,9 +40,9 @@ export default function Hero() {
       <div className="absolute inset-0">
         <Image
           src={slides[currentSlide].image}
-          alt="Hero background"
+          alt="Wild Buds Botanics"
           fill
-          className="object-cover opacity-30"
+          className="object-cover opacity-50"
           priority
         />
       </div>
@@ -52,19 +52,19 @@ export default function Hero() {
           <div className="max-w-2xl">
             <div className="space-y-6">
               <div className="space-y-2">
-                <p className="text-white/80 text-sm font-medium tracking-wider uppercase">
+                {/* <p className="text-white/80 text-sm font-medium tracking-wider uppercase">
                   {slides[currentSlide].subtitle}
-                </p>
-                <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+                </p> */}
+                {/* <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
                   {slides[currentSlide].title}
-                </h1>
+                </h1> */}
               </div>
               
-              <p className="text-white/90 text-lg leading-relaxed max-w-lg">
+              {/* <p className="text-white/90 text-lg leading-relaxed max-w-lg">
                 {slides[currentSlide].description}
-              </p>
+              </p> */}
               
-              <div className="flex flex-col sm:flex-row gap-4">
+              {/* <div className="flex flex-col sm:flex-row gap-4">
                 <Button 
                   size="lg" 
                   className="bg-white text-[#03312f] hover:bg-gray-100 font-semibold px-8 group"
@@ -81,7 +81,7 @@ export default function Hero() {
                   <Play className="mr-2 h-4 w-4" />
                   Care Guide
                 </Button>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

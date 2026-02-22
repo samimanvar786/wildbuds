@@ -6,13 +6,16 @@ import Script from "next/script";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import ReduxProvider from "@/providers/ReduxProvider";
 import { Toaster } from "sonner"; // ⬅️ ADD THIS
+import { Inter } from "next/font/google";
+
+
 
 // ✅ Local Inter font (NO Google fetch → build-safe)
 const inter = localFont({
   src: [
-    { path: "../public/fonts/Inter-SemiBold.ttf", weight: "400" },
+    { path: "../public/fonts/Inter-Regular.ttf", weight: "400" },
     { path: "../public/fonts/Inter-Medium.ttf", weight: "500" },
-    { path: "../public/fonts/Inter-Medium.ttf", weight: "600" },
+    { path: "../public/fonts/Inter-SemiBold.ttf", weight: "600" },
     { path: "../public/fonts/Inter-Bold.ttf", weight: "700" },
   ],
   display: "swap",
@@ -20,7 +23,11 @@ const inter = localFont({
 
 
 
+
 export const metadata: Metadata = {
+   icons: {
+    icon: "/favicon.ico",
+  },
   title: "Wild Buds Botanics - Premium Plant Collection",
   description:
     "Discover our curated collection of premium plants, flowers, and botanical accessories for your home and garden.",
