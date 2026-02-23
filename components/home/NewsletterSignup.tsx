@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 
-const ROSE_PINK = "#D86A8C";
+// 🌸 Brand colors
+const LEFT_COLOR = "#F4B6C2";
+const CENTER_COLOR = "#D86A8C";
+const RIGHT_COLOR = "#F2C94C";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
@@ -48,20 +51,17 @@ export default function NewsletterSignup() {
     <section
       className="py-16"
       style={{
-    background: `
-      radial-gradient(
-        circle at top left,
-        #f3b6c8 0%,
-        ${ROSE_PINK} 35%,
-        #e58aa4 55%,
-        #f7d6df 100%
-      )
-    `,
-  }}
+        background: `linear-gradient(
+          135deg,
+          ${LEFT_COLOR} 10%,
+          ${CENTER_COLOR} 45%,
+          ${RIGHT_COLOR} 100%
+        )`,
+      }}
     >
       <div className="container mx-auto px-4">
         {/* Benefits */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16 ">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
           {benefits.map((benefit, index) => (
             <Card
               key={index}
@@ -126,7 +126,7 @@ export default function NewsletterSignup() {
                 <Button
                   type="submit"
                   className="bg-white font-semibold px-8 whitespace-nowrap"
-                  style={{ color: ROSE_PINK }}
+                  style={{ color: CENTER_COLOR }}
                 >
                   Subscribe Now
                 </Button>
@@ -135,17 +135,11 @@ export default function NewsletterSignup() {
 
             <p className="text-white/70 text-sm">
               By subscribing, you agree to our{" "}
-              <a
-                href="/privacy"
-                className="underline hover:text-white transition-colors"
-              >
+              <a href="/privacy" className="underline hover:text-white">
                 Privacy Policy
               </a>{" "}
               and{" "}
-              <a
-                href="/terms"
-                className="underline hover:text-white transition-colors"
-              >
+              <a href="/terms" className="underline hover:text-white">
                 Terms of Service
               </a>
               . Unsubscribe anytime.

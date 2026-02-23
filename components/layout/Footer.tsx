@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="relative bg-[#D86A8C] text-white overflow-hidden">
       {/* Background Image */}
-      <div className="absolute inset-0 opacity-40">
+      <div className="absolute inset-0 opacity-80">
         <Image
           src="/Strips.jpg"
           alt="Footer background"

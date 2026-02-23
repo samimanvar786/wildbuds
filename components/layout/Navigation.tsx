@@ -97,7 +97,7 @@ export default function Navigation() {
                 variant="ghost"
                 size="sm"
                 className="relative"
-                style={{ color: ROSE_PINK }}
+                // style={{ color: ROSE_PINK }}
               >
                 <Heart className="h-5 w-5" />
                 {wishlistCount > 0 && (
@@ -117,13 +117,13 @@ export default function Navigation() {
                 variant="ghost"
                 size="sm"
                 className="relative"
-                style={{ color: ROSE_PINK }}
+                // style={{ color: ROSE_PINK }}
               >
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                   <Badge
                     className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs text-white"
-                    style={{ backgroundColor: ROSE_PINK }}
+                    // style={{ backgroundColor: ROSE_PINK }}
                   >
                     {cartCount}
                   </Badge>
